@@ -1,0 +1,7 @@
+#!/bin/bash
+# ls -lh
+cp navigator-service /tmp
+cp configs/config.${STAGE}.yaml /tmp
+chmod +x /tmp/navigator-service
+# 启动服务
+/tmp/navigator-service serve --config /tmp/config.${STAGE}.yaml

@@ -1,0 +1,44 @@
+app: nav
+# stage:  stage 会影响到 .env 文件的选择，所以改为在部署时通过 --stage 指定
+component: scf
+# https://github.com/serverless-components/tencent-scf/blob/master/docs/configure.md 完整配置
+name: navigatorservice
+inputs:
+  src: ./
+  type: web # 默认是event类型,本应用为web函数
+  runtime: Go1
+  entryFile: navigator-service
+  namespace: default
+  region: ${env:REGION}
+  memorySize: ${env:MEM} # 分配内存 MB
+  initTimeout: 3 # 初始化超时时间，单位秒
+  timeout: 15 # 函数执行超时时间
+  environment: #  环境变量
+    variables: #  环境变量对象
+      STAGE: ${env:STAGE}
+      JWT_SIGNING_KEY: ${env:JWT_SIGNING_KEY}
+      HASHIDS_SALT: ${env:HASHIDS_SALT}
+      DB_PASSWORD: ${env:DB_PASSWORD}
+
+  vpcConfig: # 私有网络配置
+    vpcId: ${env:VPC_ID} # 私有网络的Id
+    subnetId: ${env:SUBNET_ID} # 子网ID
+  # ignoreTriggers: true # 忽略配置文件中的触发器配置
+  events: # 触发器
+    - apigw: # api网关触发器，已有apigw服务，配置触发器
+        parameters:
+          serviceName: ${env:API_GW_NAME}
+          serviceId: ${env:API_GW_ID}
+          protocols:
+            - http
+            - https
+          netTypes:
+            - OUTER
+          description: navigator service api gateway
+          environment: release
+          endpoints:
+            - path: /swagger/
+              method: ANY
+              description: swagger文档路由
+            - path: /v1/
+              method: ANY

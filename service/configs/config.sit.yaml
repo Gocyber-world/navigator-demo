@@ -1,0 +1,20 @@
+mysql:
+  path: 172.17.0.17
+  port: 3306
+  config: charset=utf8mb4&parseTime=True&loc=Local
+  db-name: navigator_sit
+  username: navigator_user
+  password: "" # 从环境变量中读取
+  max-idle-conns: 0
+  max-open-conns: 0
+  log-mode: ""
+  log-zap: false
+jwt:
+  signing-key: "" # 从环境变量中读取
+  expiretime: 86400 # 有效期 秒
+  cookies-domain: demo.gocyber.world
+hashids:
+  salt: "" # 从环境变量中读取
+  minlength: 6
+static-resource-cdn-host: ""
+host: https://demo.gocyber.world
