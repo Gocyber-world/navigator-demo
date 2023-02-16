@@ -1,12 +1,9 @@
 package system
 
 import (
-	"time"
-
 	"github.com/Gocyber-world/navigator-demo/global"
 	"github.com/Gocyber-world/navigator-demo/logger"
 	model "github.com/Gocyber-world/navigator-demo/model/system"
-	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -51,13 +48,10 @@ func (us *UserService) RegisterUser(email string, password string, nick string) 
 		return nil, err
 	}
 	var newUser = &model.SysUser{
-		NickName:          nick,
-		Email:             email,
-		HashedPassword:    string(hashedPassword),
-		ConfirmationToken: uuid.New().String(),
+		NickName:       nick,
+		Email:          email,
+		HashedPassword: string(hashedPassword),
 	}
-	t := time.Now()
-	newUser.ConfirmationSentAt = &t
 
 	if err = global.GVA_DB.Create(newUser).Error; err != nil {
 		return nil, err
@@ -78,24 +72,4 @@ func (us *UserService) LoginUser(email string, password string) (*model.SysUser,
 	}
 
 	return u, nil
-}
-
-// 该方法只在openapi中使用，创建出来的用户默认为已激活状态
-func (userService *UserService) CreateUserWithNickName(nickname string) (*model.SysUser, error) {
-	user := &model.SysUser{
-		NickName: nickname,
-	}
-	if err := global.GVA_DB.Create(user).Error; err != nil {
-		return nil, err
-	}
-	return user, nil
-}
-
-// 自定义类型的错误,由于部分错误需要把错误信息返回给前端
-type ConfirmEmailError struct {
-	errorMsg string
-}
-
-func (e *ConfirmEmailError) Error() string {
-	return e.errorMsg
 }

@@ -53,7 +53,6 @@ func (b *BaseApi) RegisterUser(c *gin.Context) {
 	// 非生产环境response中包含激活用的userId与token方便进行测试
 	if global.STAGE != "prod" && global.STAGE != "beta" {
 		c.Writer.Header().Set("test-mail-confirmation-uid", global.OBFUSE.Obfuscate(newUser.ID))
-		c.Writer.Header().Set("test-mail-confirmation-token", newUser.ConfirmationToken)
 	}
 	response.OkWithMessage("Success", c)
 }

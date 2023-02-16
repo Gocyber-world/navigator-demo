@@ -4,6 +4,7 @@ import (
 	_ "github.com/Gocyber-world/navigator-demo/docs"
 	"github.com/Gocyber-world/navigator-demo/global"
 	"github.com/Gocyber-world/navigator-demo/middleware"
+	"github.com/Gocyber-world/navigator-demo/model/common/response"
 	"github.com/Gocyber-world/navigator-demo/router"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
@@ -32,7 +33,7 @@ func Routers() *gin.Engine {
 	PublicGroup := r.Group("")
 	{
 		PublicGroup.GET("/health", func(c *gin.Context) {
-			c.JSON(200, "ok")
+			response.OkWithMessage("I am Ok with version 0", c)
 		})
 	}
 
