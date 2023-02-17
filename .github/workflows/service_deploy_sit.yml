@@ -1,0 +1,53 @@
+name: Service Deploy SIT
+
+on:
+  push:
+    branches:
+      - main # 当主干分支PR合并进入时触发SIT部署
+    paths:
+      - 'service/**'
+      - '.github/workflows/service_**'
+  workflow_dispatch:
+
+jobs:
+  build_deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./service
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+
+      - name: Generate doc
+        run: go generate -x
+
+      - name: Build
+        run: go build -v -o navigator-service
+
+      - name: Chmod
+        run: |
+          chmod +x navigator-service
+          ls -lh
+
+      - name: Set up Node
+        uses: actions/setup-node@master
+
+      - name: Set up serverless-cloud-framework
+        run: npm install -g serverless-cloud-framework
+
+      - name: Deploy to Tencent
+        run: |
+          ls -lh
+          scf deploy --stage sit
+        env: # 环境变量 注：变量使用需在serverless.yml进行中再进行配置，无法直接使用global.GVA_VP.GetString获取值
+          SERVERLESS_PLATFORM_VENDOR: tencent #serverless 境外默认为 aws，配置为腾讯
+          TENCENT_SECRET_ID: ${{ secrets.TENCENT_SECRET_ID }} #您的腾讯云账号 sercret ID
+          TENCENT_SECRET_KEY: ${{ secrets.TENCENT_SECRET_KEY }} #您的腾讯云账号 sercret key
+          JWT_SIGNING_KEY: ${{ secrets.SIT_JWT_SIGNING_KEY }}
+          HASHIDS_SALT: ${{ secrets.SIT_HASHIDS_SALT }}
+          DB_PASSWORD: ${{ secrets.SIT_DB_PASSWORD }}
