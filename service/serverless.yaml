@@ -8,10 +8,10 @@ inputs:
   type: web # 默认是event类型,本应用为web函数
   runtime: Go1
   entryFile: navigator-service
-  namespace: default
+  namespace: backend
   region: ${env:REGION}
   memorySize: ${env:MEM} # 分配内存 MB
-  initTimeout: 3 # 初始化超时时间，单位秒
+  initTimeout: 10 # 初始化超时时间，单位秒
   timeout: 15 # 函数执行超时时间
   environment: #  环境变量
     variables: #  环境变量对象

@@ -1,4 +1,4 @@
-name: ci-action
+name: Service CI Test
 on:
   pull_request:
     paths:
