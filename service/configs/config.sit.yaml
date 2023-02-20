@@ -1,6 +1,6 @@
 mysql:
-  path: 172.17.0.17
-  port: 3306
+  path: 10.10.0.5
+  port: 33077
   config: charset=utf8mb4&parseTime=True&loc=Local
   db-name: navigator_sit
   username: navigator_user
@@ -12,9 +12,9 @@ mysql:
 jwt:
   signing-key: "" # 从环境变量中读取
   expiretime: 86400 # 有效期 秒
-  cookies-domain: demo.gocyber.world
+  cookies-domain: navigator-demo.builtopia.io
 hashids:
   salt: "" # 从环境变量中读取
   minlength: 6
 static-resource-cdn-host: ""
-host: https://demo.gocyber.world
+host: https://navigator-demo.builtopia.io

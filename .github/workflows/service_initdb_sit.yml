@@ -1,0 +1,33 @@
+name: Service Init DB SIT
+# 数据库、表初始化，调用 initMigrateMysql 子命令
+on:
+  workflow_dispatch:
+jobs:
+  init_database:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./service
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+
+      - name: Generate doc
+        run: go generate -x
+
+      - name: Build
+        run: go build -v -o navigator-service
+
+      - name: Init DB
+        run: |
+          chmod +x navigator-service
+          ./navigator-service initMigrateMysql --config configs/config.sit.yaml
+        env:
+          DB_ADDR: ${{ secrets.SIT_MYSQL_ADDR }}
+          DB_PORT: ${{ secrets.SIT_MYSQL_PORT }}
+          DB_PASSWORD: ${{ secrets.SIT_DB_PASSWORD }}
+          STAGE: sit
