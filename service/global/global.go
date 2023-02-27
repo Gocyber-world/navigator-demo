@@ -19,4 +19,7 @@ var (
 	JWT_AUTH        *middleware.JWT
 	STAGE           string
 	MYSQL_CONFIG    config.Mysql
+
+	BUILTOPIA_ENDPOINT     string
+	BUILTOPIA_CLIENT_TOKEN string
 )

@@ -75,7 +75,8 @@ jobs:
 
       - name: Start service
         run: go run main.go serve --config configs/config.ci.yaml &
-
+        env:
+          BUILTOPIA_CLIENT_TOKEN: ${{ secrets.CI_BUILTOPIA_CLIENT_TOKEN }}
 
       - name: Navigator Service API Test
         uses: matt-ball/newman-action@v1.0.4

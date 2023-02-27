@@ -30,4 +30,5 @@ jobs:
           DB_ADDR: ${{ secrets.SIT_MYSQL_ADDR }}
           DB_PORT: ${{ secrets.SIT_MYSQL_PORT }}
           DB_PASSWORD: ${{ secrets.SIT_DB_PASSWORD }}
+          BUILTOPIA_CLIENT_TOKEN: ${{ secrets.SIT_BUILTOPIA_CLIENT_TOKEN }}
           STAGE: sit

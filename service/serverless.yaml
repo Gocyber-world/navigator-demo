@@ -19,6 +19,7 @@ inputs:
       JWT_SIGNING_KEY: ${env:JWT_SIGNING_KEY}
       HASHIDS_SALT: ${env:HASHIDS_SALT}
       DB_PASSWORD: ${env:DB_PASSWORD}
+      BUILTOPIA_CLIENT_TOKEN: ${env:BUILTOPIA_CLIENT_TOKEN}
 
   vpcConfig: # 私有网络配置
     vpcId: ${env:VPC_ID} # 私有网络的Id

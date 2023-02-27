@@ -51,3 +51,4 @@ jobs:
           JWT_SIGNING_KEY: ${{ secrets.SIT_JWT_SIGNING_KEY }}
           HASHIDS_SALT: ${{ secrets.SIT_HASHIDS_SALT }}
           DB_PASSWORD: ${{ secrets.SIT_DB_PASSWORD }}
+          BUILTOPIA_CLIENT_TOKEN: ${{ secrets.SIT_BUILTOPIA_CLIENT_TOKEN }}
