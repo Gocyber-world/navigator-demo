@@ -60,6 +60,13 @@ func initServeEnv() {
 	global.JWT_EXPIRE_TIME = global.GVA_VP.GetInt("jwt.expiretime")
 	global.JWT_COOKIES_DOMAIN = global.GVA_VP.GetString("jwt.cookies-domain")
 	global.HOST = global.GVA_VP.GetString("host")
+	global.BUILTOPIA_ENDPOINT = global.GVA_VP.GetString("builtopia.endpoint")
+	global.BUILTOPIA_CLIENT_TOKEN = global.GVA_VP.GetString("builtopia.client-token")
+
+	// 从环境变量中读取
+	if client_token := global.GVA_VP.GetString("BUILTOPIA_CLIENT_TOKEN"); client_token != "" {
+		global.BUILTOPIA_CLIENT_TOKEN = client_token
+	}
 
 	initDBService := system.InitDBService{}
 	if err := initDBService.ConnectGlobalDB(global.MYSQL_CONFIG); err != nil {

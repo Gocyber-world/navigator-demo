@@ -18,3 +18,6 @@ hashids:
   minlength: 6
 static-resource-cdn-host: ""
 host: https://navigator-demo.builtopia.io
+builtopia:
+  endpoint: https://builtopia.net
+  client-token: "" #v2 api use this
