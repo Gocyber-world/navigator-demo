@@ -43,16 +43,11 @@ func (b *BaseApi) RegisterUser(c *gin.Context) {
 	}
 
 	// mysql中创建用户
-	newUser, err := system.UserServiceApp.RegisterUser(req.Email, req.Password, req.NickName)
+	_, err = system.UserServiceApp.RegisterUser(req.Email, req.Password, req.NickName)
 	if err != nil {
 		logger.Error(err.Error())
 		response.FailWithMessage("Registration failed", c)
 		return
-	}
-
-	// 非生产环境response中包含激活用的userId与token方便进行测试
-	if global.STAGE != "prod" && global.STAGE != "beta" {
-		c.Writer.Header().Set("test-mail-confirmation-uid", global.OBFUSE.Obfuscate(newUser.ID))
 	}
 	response.OkWithMessage("Success", c)
 }

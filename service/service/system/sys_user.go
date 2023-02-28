@@ -48,9 +48,12 @@ func (us *UserService) RegisterUser(email string, password string, nick string) 
 		return nil, err
 	}
 	var newUser = &model.SysUser{
-		NickName:       nick,
-		Email:          email,
-		HashedPassword: string(hashedPassword),
+		NickName:              nick,
+		Email:                 email,
+		HashedPassword:        string(hashedPassword),
+		AvatarModelUrl:        "",
+		ProfilePicUrl:         "",
+		BuiltopiaClientUserId: "",
 	}
 
 	if err = global.GVA_DB.Create(newUser).Error; err != nil {
