@@ -19,6 +19,7 @@ func SendHttpRequest(url string, method string, data interface{}, token string) 
 		body = string(jsonData)
 	}
 	req, _ := http.NewRequest(method, url, strings.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
 	// using token if it is not empty
 	if token != "" {
 		req.Header.Set("Authorization", "Token "+token)
