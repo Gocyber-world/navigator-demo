@@ -25,7 +25,7 @@ func (u *user) Initialize() error {
 	}
 	if errors.Is(global.GVA_DB.Where("id = ?", 1000).First(&system.SysUser{}).Error, gorm.ErrRecordNotFound) {
 		if err := global.GVA_DB.Create(&[]system.SysUser{
-			{Model: gorm.Model{ID: 1000}, NickName: "简单男孩", HashedPassword: string(defaultPasswordHash), Email: "simple@demo.gocyber.world"},
+			{Model: gorm.Model{ID: 1000}, NickName: "简单男孩", HashedPassword: string(defaultPasswordHash), Email: "simple@demo.gocyber.world", BuiltopiaClientUserId: "navi-simple", ProfilePicUrl: "", AvatarModelUrl: ""},
 		}).Error; err != nil {
 			return errors.Wrap(err, u.TableName()+" init data failed")
 		}
