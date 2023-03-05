@@ -6,6 +6,7 @@ import (
 	"github.com/Gocyber-world/navigator-demo/global"
 	"github.com/Gocyber-world/navigator-demo/logger"
 	commResp "github.com/Gocyber-world/navigator-demo/model/common/response"
+	request "github.com/Gocyber-world/navigator-demo/model/system/request"
 	"github.com/Gocyber-world/navigator-demo/utils"
 )
 
@@ -32,5 +33,33 @@ func (bs *BuiltopiaOpenApiService) BuiltopiaSdkHelper(url string, method string,
 }
 
 func (bs *BuiltopiaOpenApiService) RegisterCustomer(email string, password string, clientUserId string, displayName string, profilePicUrl string, avatarModelUrl string) error {
+	var reqData = request.BuiltopiaRegisterCustomer{
+		Email:          email,
+		Password:       password,
+		ClientUserId:   clientUserId,
+		DisplayName:    displayName,
+		ProfilePicUrl:  profilePicUrl,
+		AvatarModelUrl: avatarModelUrl,
+	}
+	_, _, err := bs.BuiltopiaSdkHelper(global.BUILTOPIA_ENDPOINT+"/v2/openapi/customer", "POST", reqData)
+	if err != nil {
+		logger.Error(err.Error())
+		return err
+	}
+	return nil
+}
+
+func (bs *BuiltopiaOpenApiService) UpdateCustomerProfile(clientUserId string, displayName string, profilePicUrl string, avatarModelUrl string) error {
+	var reqData = request.BuiltopiaUpdateCustomerProfile{
+		ClientUserId:   clientUserId,
+		DisplayName:    displayName,
+		ProfilePicUrl:  profilePicUrl,
+		AvatarModelUrl: avatarModelUrl,
+	}
+	_, _, err := bs.BuiltopiaSdkHelper(global.BUILTOPIA_ENDPOINT+"/v2/openapi/account", "PATCH", reqData)
+	if err != nil {
+		logger.Error(err.Error())
+		return err
+	}
 	return nil
 }
