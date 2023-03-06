@@ -115,16 +115,16 @@ func (b *BaseApi) SysUserRegisterBuiltopiaCustomer(c *gin.Context) {
 		return
 	}
 
-	// 获取用户clientUserId
+	// 检查clientUserId是否为空
 	user, err := system.UserServiceApp.GetUserByID(userInfo.UserID)
-	if err != nil {
+	if err != nil || user.BuiltopiaClientUserId != "" {
 		logger.Error(err.Error())
-		response.FailWithMessage("Failed to get user info", c)
+		response.FailWithMessage("User already linked to existed Builtopia Customer.", c)
 		return
 	}
 
 	// Create Builtopia Customer
-	err = system.BuiltopiaOpenApiServiceApp.RegisterCustomer(req.Email, req.Password, user.BuiltopiaClientUserId, req.DisplayName, req.ProfilePicUrl, req.AvatarModelUrl)
+	err = system.BuiltopiaOpenApiServiceApp.RegisterCustomer(req.Email, req.Password, req.BuiltopiaClientUserId, req.DisplayName, req.ProfilePicUrl, req.AvatarModelUrl)
 	if err != nil {
 		logger.Error(err.Error())
 		response.FailWithMessage("Failed to register Builtopia Customer", c)

@@ -24,11 +24,12 @@ type UserEmailConfirmation struct {
 }
 
 type SysUserRegisterBuiltopiaCustomer struct {
-	Email          string `json:"email" binding:"required,email,max=64"`
-	Password       string `json:"password" binding:"required,min=8,max=32"`
-	DisplayName    string `json:"displayName" binding:"required,max=64"`
-	ProfilePicUrl  string `json:"profilePicUrl" binding:"required,max=64"`
-	AvatarModelUrl string `json:"avatarModelUrl" binding:"required,max=64"`
+	Email                 string `json:"email" binding:"required,email,max=64"`
+	Password              string `json:"password" binding:"required,min=8,max=32"`
+	DisplayName           string `json:"displayName" binding:"required,max=64"`
+	ProfilePicUrl         string `json:"profilePicUrl" binding:"required,max=64"`
+	AvatarModelUrl        string `json:"avatarModelUrl" binding:"required,max=64"`
+	BuiltopiaClientUserId string `json:"builtopiaClientUserId" binding:"required,max=64"`
 }
 
 type UpdateUserProfile struct {
