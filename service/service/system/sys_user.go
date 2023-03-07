@@ -76,3 +76,16 @@ func (us *UserService) LoginUser(email string, password string) (*model.SysUser,
 
 	return u, nil
 }
+
+func (us *UserService) UpdateUser(userId uint, displayName string, profilePicUrl string, avatarModelUrl string) error {
+	user, err := us.GetUserByID(userId)
+	if err != nil {
+		return err
+	}
+
+	if err := global.GVA_DB.Model(&user).Updates(model.SysUser{NickName: displayName, ProfilePicUrl: profilePicUrl, AvatarModelUrl: avatarModelUrl}).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

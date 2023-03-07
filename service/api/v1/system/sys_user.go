@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/Gocyber-world/navigator-demo/model/common/response"
+	"github.com/Gocyber-world/navigator-demo/utils"
 	"gorm.io/gorm"
 
 	"github.com/Gocyber-world/navigator-demo/global"
@@ -18,8 +19,7 @@ import (
 // @Summary 用户自行注册
 // @accept application/json
 // @Param data body systemReq.RegisterUser true " "
-// @Param GOC-CAPTCHA header string true "recaptcha token"
-// @Success 200 {object} response.Response "非生产环境中 test-mail-confirmation-uid 与 test-mail-confirmation-token header代表了用于激活的userId 和 token"
+// @Success 200 {object} response.Response ""
 // @Router /v1/user/register [post]
 func (b *BaseApi) RegisterUser(c *gin.Context) {
 	var req systemReq.RegisterUser
@@ -56,7 +56,6 @@ func (b *BaseApi) RegisterUser(c *gin.Context) {
 // @Summary 通过邮箱和密码自行登录
 // @accept application/json
 // @Param data body systemReq.LoginUser true " "
-// @Param GOC-CAPTCHA header string true "recaptcha token"
 // @Success 200 {object} response.Response{data=systemResp.UserAccountResponse} "{"code":0,"data":"","msg":""}"
 // @Router /v1/user/login [post]
 func (b *BaseApi) LoginUser(c *gin.Context) {
@@ -91,4 +90,126 @@ func (b *BaseApi) LoginUser(c *gin.Context) {
 		Name:   user.NickName,
 	}, c)
 	logger.Infof("user %s login", user.NickName)
+}
+
+// @Tags User
+// @Summary 平台用户注册 Builtopia Customer
+// @accept application/json
+// @Param data body systemReq.SysUserRegisterBuiltopiaCustomer true " "
+// @Success 200 {object} response.Response "{"code":0,"data":"","msg":""}"
+// @Router /v1/builtopia/customer [post]
+func (b *BaseApi) SysUserRegisterBuiltopiaCustomer(c *gin.Context) {
+	userInfo, err := utils.GetUserInfo(c)
+	if err != nil {
+		logger.Error(err.Error())
+		response.FailWithMessage("Failed to get user info", c)
+		return
+	}
+
+	var req systemReq.SysUserRegisterBuiltopiaCustomer
+	// 校验请求内容是否合法(密码长度、邮箱格式以及必要字段是否都带上了)
+	err = c.ShouldBindJSON(&req)
+	if err != nil {
+		logger.Error(err.Error())
+		response.FailWithMessage("Failed to parse request", c)
+		return
+	}
+
+	// 检查clientUserId是否为空
+	user, err := system.UserServiceApp.GetUserByID(userInfo.UserID)
+	if err != nil || user.BuiltopiaClientUserId != "" {
+		logger.Error(err.Error())
+		response.FailWithMessage("User already linked to existed Builtopia Customer.", c)
+		return
+	}
+
+	// Create Builtopia Customer
+	err = system.BuiltopiaOpenApiServiceApp.RegisterCustomer(req.Email, req.Password, req.BuiltopiaClientUserId, req.DisplayName, req.ProfilePicUrl, req.AvatarModelUrl)
+	if err != nil {
+		logger.Error(err.Error())
+		response.FailWithMessage("Failed to register Builtopia Customer", c)
+		return
+	}
+
+	response.OkWithMessage("Success", c)
+}
+
+// @Tags User
+// @Summary 平台用户修改个人资料同时更新Builtopia Customer
+// @accept application/json
+// @Param data body systemReq.UpdateUserProfile true " "
+// @Success 200 {object} response.Response "{"code":0,"data":"","msg":""}"
+// @Router /v1/user/info [patch]
+func (b *BaseApi) UpdateUserProfile(c *gin.Context) {
+	userInfo, err := utils.GetUserInfo(c)
+	if err != nil {
+		logger.Error(err.Error())
+		response.FailWithMessage("Failed to get user info", c)
+		return
+	}
+
+	var req systemReq.UpdateUserProfile
+	// 校验请求内容是否合法(密码长度、邮箱格式以及必要字段是否都带上了)
+	err = c.ShouldBindJSON(&req)
+	if err != nil {
+		logger.Error(err.Error())
+		response.FailWithMessage("Failed to parse request", c)
+		return
+	}
+
+	// 获取用户clientUserId
+	user, err := system.UserServiceApp.GetUserByID(userInfo.UserID)
+	if err != nil {
+		logger.Error(err.Error())
+		response.FailWithMessage("Failed to get user info", c)
+		return
+	}
+
+	// Update Builtopia Customer
+	err = system.BuiltopiaOpenApiServiceApp.UpdateCustomerProfile(user.BuiltopiaClientUserId, req.NickName, req.ProfilePicUrl, req.AvatarModelUrl)
+	if err != nil {
+		logger.Error(err.Error())
+		response.FailWithMessage("Failed to update Builtopia Customer", c)
+		return
+	}
+
+	// Update User
+	err = system.UserServiceApp.UpdateUser(userInfo.UserID, req.NickName, req.ProfilePicUrl, req.AvatarModelUrl)
+	if err != nil {
+		logger.Error(err.Error())
+		response.FailWithMessage("Failed to update user profile", c)
+		return
+	}
+
+	response.OkWithMessage("Success", c)
+}
+
+// @Tags User
+// @Summary 平台用户获取个人信息
+// @accept application/json
+// @Success 200 {object} response.Response{data=systemResp.UserInfoResponse} "{"code":0,"data":"","msg":""}"
+// @Router /v1/user/info [get]
+func (b *BaseApi) GetUserInfo(c *gin.Context) {
+	userInfo, err := utils.GetUserInfo(c)
+	if err != nil {
+		logger.Error(err.Error())
+		response.FailWithMessage("Failed to get user info", c)
+		return
+	}
+
+	user, err := system.UserServiceApp.GetUserByID(userInfo.UserID)
+	if err != nil {
+		logger.Error(err.Error())
+		response.FailWithMessage("Failed to get user info", c)
+		return
+	}
+
+	response.OkWithData(systemResp.UserInfoResponse{
+		UserID:                global.OBFUSE.Obfuscate(user.ID),
+		NickName:              user.NickName,
+		Email:                 user.Email,
+		BuiltopiaClientUserId: user.BuiltopiaClientUserId,
+		ProfilePicUrl:         user.ProfilePicUrl,
+		AvatarModelUrl:        user.AvatarModelUrl,
+	}, c)
 }
