@@ -15,3 +15,8 @@ type BuiltopiaUpdateCustomerProfile struct {
 	AvatarModelUrl string `json:"avatarModelUrl" binding:"required,max=64"`
 	ClientUserId   string `json:"clientUserId" binding:"required,max=64"`
 }
+
+type BuiltopiaAuthorizeAssets struct {
+	ClientUserId   string         `json:"clientUserId" binding:"required,max=64"`
+	ClientAssetIds map[string]int `json:"clientAssetIds" binding:"required"`
+}

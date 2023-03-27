@@ -7,12 +7,12 @@ import (
 	"strings"
 )
 
-func SendHttpRequest(url string, method string, data interface{}, token string) (int, string, error) {
+func SendHttpRequest(url string, method string, bodyData interface{}, queryData interface{}, token string) (int, string, error) {
 	var body string
 	var err error
-	if data != nil {
+	if bodyData != nil {
 		var jsonData []byte
-		jsonData, err = json.Marshal(data)
+		jsonData, err = json.Marshal(bodyData)
 		if err != nil {
 			return -1, "", err
 		}
@@ -23,6 +23,16 @@ func SendHttpRequest(url string, method string, data interface{}, token string) 
 	// using token if it is not empty
 	if token != "" {
 		req.Header.Set("Authorization", "Token "+token)
+	}
+
+	// set querystring if exists
+	if queryData != nil {
+		q := req.URL.Query()
+		queryDataMap := queryData.(map[string]interface{})
+		for key, value := range queryDataMap {
+			q.Add(key, value.(string))
+		}
+		req.URL.RawQuery = q.Encode()
 	}
 
 	resp, err := http.DefaultClient.Do(req)
